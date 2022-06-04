@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.whynotpot.third_party_module_manager">
+
+    <application>
+        <activity
+            android:name=".ModulesManagerActivity"
+            android:exported="false"
+            android:label="@string/title_activity_modules_manager"
+            android:theme="@style/Theme.PlayFeatureDelivery" />
+    </application>
+
+</manifest>
