@@ -2,7 +2,6 @@ package com.whynotpot.thirdpartymodulemanagertestapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -11,22 +10,17 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import com.google.android.play.core.splitinstall.SplitInstallRequest
-import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
-import com.google.android.play.core.splitinstall.testing.FakeSplitInstallManager
-import com.google.android.play.core.splitinstall.testing.FakeSplitInstallManagerFactory
-import com.whynotpot.third_party_module_manager.ModuleManager
+import com.whynotpot.frog.RunApi
+import com.whynotpot.third_party_module_manager.manager.ModuleManagerImpl
 import com.whynotpot.third_party_module_manager.ModulesManagerActivity
+import com.whynotpot.third_party_module_manager.file.FilePathType
 import com.whynotpot.thirdpartymodulemanagertestapp.databinding.ActivityMainBinding
-import java.io.File
-import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
-    private val name = "frogm"
-    private lateinit var modalLoader: ModalLoader
+    private val name = "frogm3"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,20 +28,20 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+        val moduleManagerImpl = ModuleManagerImpl<RunApi>(FilePathType.APP_FOLDER, name, this)
+        binding.buttonLoad.setOnClickListener { moduleManagerImpl.load(name) }
+        binding.buttonStart.setOnClickListener {
 
-        binding.buttonLoad.setOnClickListener {      ModuleManager.load(this, name) }
-        binding.buttonStart.setOnClickListener {      ModuleManager.load(this, name) }
 
-        /*       val moduleInstallRequest: SplitInstallRequest= SplitInstallRequest.newBuilder()
-                   .addModule(name)
-                  // .addLanguage(Locale.forLanguageTag("en"))
-                   .build()*/
-        /* val file: File? = getExternalFilesDir("modals")
-         if (file != null)
-             modalLoader = ModalLoader(baseContext, file)
-         else {
-             Log.i("aa", "dasdasdasdasdas")
-         }*/
+            supportFragmentManager.beginTransaction().apply {
+                replace(
+                    binding.flFragment.id,
+                    moduleManagerImpl.executeModule().getFragment()
+                )
+                commit()
+            }
+        }
+
 
 
         val navController = findNavController(R.id.nav_host_fragment_content_main)
@@ -55,35 +49,10 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
 
         binding.fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-            val intentToLibrary = Intent(
-                this,
-                ModulesManagerActivity::class.java
+            val intentToLibrary = Intent(this, ModulesManagerActivity::class.java
             )
             startActivity(intentToLibrary)
         }
-        // Log.i("aa",modalLoader)
-        /*    modalLoader.apply {
-                modalsList()
-                binding.buttonLoad.setOnClickListener {
-
-                    installModule(name)
-                }
-                binding.buttonDelete.setOnClickListener { deleteModule(name) }
-                binding.buttonStart.setOnClickListener {
-
-
-                    supportFragmentManager.beginTransaction().apply {
-                        replace(
-                            binding.flFragment.id,
-                            executeModule(classLoader, supportFragmentManager)
-                        )
-                        commit()
-                    }
-                }
-            }*/
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

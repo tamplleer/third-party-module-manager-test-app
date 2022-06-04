@@ -1,33 +1,18 @@
-package com.whynotpot.third_party_module_manager
+package com.whynotpot.third_party_module_manager.loader
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.google.android.play.core.splitinstall.testing.FakeSplitInstallManager
 import com.google.android.play.core.splitinstall.testing.FakeSplitInstallManagerFactory
-import com.whynotpot.frog.ModuleInfoModel
-import com.whynotpot.frog.RunApi
 import java.io.File
 
-class ModuleLoader(val context: Context, val externalFileDir: File) {
-
-    companion object {
-        private lateinit var moduleClass: Class<ModuleInfoModel<RunApi>>
-        fun getModuleInfo(classLoader: ClassLoader): ModuleInfoModel<RunApi>? {
-            try {
-                moduleClass =
-                    classLoader.loadClass("com.whynotpot.frog.ModuleInfo") as Class<ModuleInfoModel<RunApi>>
-                return moduleClass.newInstance()
-            } catch (e: Exception) {
-                Log.e("aa", e.message.toString())
-            }
-            return null
-        }
-    }
-
+@SuppressLint("StaticFieldLeak")
+object ModulesLoaderFakeSplitInstall : ModulesLoader {
+    lateinit var context: Context
+    lateinit var externalFileDir: File
     private lateinit var moduleInstallRequest: SplitInstallRequest
     private val splitInstallManagerFake: FakeSplitInstallManager by lazy {
         FakeSplitInstallManagerFactory.create(
@@ -35,17 +20,30 @@ class ModuleLoader(val context: Context, val externalFileDir: File) {
         )
     }
 
-    fun modalsList(): List<String> {
+    fun init(context: Context, externalFileDir: File) {
+        if (!this::context.isInitialized || !this::externalFileDir.isInitialized) {
+            ModulesLoaderFakeSplitInstall.context = context
+            ModulesLoaderFakeSplitInstall.externalFileDir = externalFileDir
+            setupModulesDownload()
+        }
+
+    }
+
+    private fun checkInitialisation() {
+        if (!this::context.isInitialized || !this::externalFileDir.isInitialized) {
+            throw Exception("Not initialized")
+        }
+    }
+
+
+    override fun modulesList(): List<String> {
+        checkInitialisation()
         splitInstallManagerFake.installedModules.forEach { Log.i("aa", "modules ${it}") }
         return splitInstallManagerFake.installedModules.toList()
     }
 
-    fun setupModulesDownload(moduleName: String) {
-        moduleInstallRequest = SplitInstallRequest.newBuilder()
-            .addModule(moduleName)
-            .build()
-        Log.i("aa", "setupModulesDownload")
-// 1
+    private fun setupModulesDownload() {
+        checkInitialisation()
         splitInstallManagerFake.registerListener {
             // 2
             when (it.status()) {
@@ -69,79 +67,52 @@ class ModuleLoader(val context: Context, val externalFileDir: File) {
                 }
                 SplitInstallSessionStatus.CANCELED -> {
                     Log.i("aa", "CANCELED")
-                    TODO()
                 }
                 SplitInstallSessionStatus.CANCELING -> {
                     Log.i("aa", "CANCELING")
-                    TODO()
                 }
                 SplitInstallSessionStatus.DOWNLOADED -> {
                     Log.i("aa", "DOWNLOADED")
-                    TODO()
                 }
                 SplitInstallSessionStatus.FAILED -> {
                     Log.i("aa", "FAILED")
-                    TODO()
                 }
                 SplitInstallSessionStatus.INSTALLING -> {
                     Log.i("aa", "INSTALLING")
-                    TODO()
                 }
                 SplitInstallSessionStatus.PENDING -> {
                     Log.i("aa", "PENDING")
-                    // Toast.makeText(applicationContext, "Module cat error", Toast.LENGTH_SHORT).show()
                 }
                 SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
                     Log.i("aa", "REQUIRES_USER_CONFIRMATION")
-                    TODO()
                 }
                 SplitInstallSessionStatus.UNKNOWN -> {
                     Log.i("aa", "UNKNOWN")
-                    TODO()
                 }
             }
         }
-        //    binding.catsCard.setOnClickListener {
-        //       executeModule()
-        //   splitInstallManagerFake.installedModules.forEach { Log.i("aa modules = ", it) }
-
-        //  splitInstallManager.deferredUninstall(listOf("frogs"));
-        //   splitInstallManagerFake.startInstall(catsModuleInstallRequest)
-        //   }
     }
 
     fun deleteModule(moduleName: String) {
+        checkInitialisation()
         splitInstallManagerFake.deferredUninstall(listOf(moduleName));
     }
 
     fun deleteModule(modulesNames: List<String>) {
+        checkInitialisation()
         splitInstallManagerFake.deferredUninstall(modulesNames);
     }
 
-    fun installModule(moduleName: String) {
+    override fun installModule(moduleName: String) {
+        checkInitialisation()
+        moduleInstallRequest = SplitInstallRequest.newBuilder()
+            .addModule(moduleName)
+            .build()
         moduleInstallRequest.let {
             splitInstallManagerFake.startInstall(it)
         }
 
     }
 
-    fun executeModule(classLoader: ClassLoader, supportFragmentManager: FragmentManager): Fragment {
-        try {
 
-            Log.i(
-                "aa",
-                "${classLoader.loadClass("com.whynotpot.frog.Run").classes.toList().toString()}"
-            )
-            val runs: Class<RunApi> =
-                classLoader.loadClass("com.whynotpot.frog.Run") as Class<RunApi>
-            val ss = runs.newInstance()
-            Log.i("aa", "fROG =  ${ss.runString("mey mey")}")
-            Log.i("aa", "fROG =  ${ss.run(1, 2).toString()}")
-            return ss.getFragment()
-        } catch (e: Exception) {
-            Log.i("aa", "fRoG error ${e.message.toString()}")
-            Log.i("aa", "fRoG error ${e.message.toString()}")
-            throw Exception(e)
-        }
-    }
 }
