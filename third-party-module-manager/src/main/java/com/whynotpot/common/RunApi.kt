@@ -1,4 +1,4 @@
-package com.whynotpot.frog
+package com.whynotpot.common
 import androidx.fragment.app.Fragment
 
 interface RunApi {

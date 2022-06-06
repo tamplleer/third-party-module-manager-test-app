@@ -3,6 +3,7 @@ package com.whynotpot.third_party_module_manager.loader
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import com.google.android.play.core.splitinstall.SplitInstallRequest
 import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import com.google.android.play.core.splitinstall.testing.FakeSplitInstallManager
@@ -20,7 +21,7 @@ object ModulesLoaderFakeSplitInstall : ModulesLoader {
         )
     }
 
-    fun init(context: Context, externalFileDir: File) {
+    fun inits(context: Context, externalFileDir: File) {
         if (!this::context.isInitialized || !this::externalFileDir.isInitialized) {
             ModulesLoaderFakeSplitInstall.context = context
             ModulesLoaderFakeSplitInstall.externalFileDir = externalFileDir
@@ -38,7 +39,6 @@ object ModulesLoaderFakeSplitInstall : ModulesLoader {
 
     override fun modulesList(): List<String> {
         checkInitialisation()
-        splitInstallManagerFake.installedModules.forEach { Log.i("aa", "modules ${it}") }
         return splitInstallManagerFake.installedModules.toList()
     }
 
@@ -54,16 +54,7 @@ object ModulesLoaderFakeSplitInstall : ModulesLoader {
                 }
                 SplitInstallSessionStatus.INSTALLED -> {
                     Log.i("aa", "INSTALLED")
-                    //   binding.progressIndicator.visibility = View.GONEToast.makeText(applicationContext, "Module Download Completed ohuet", Toast.LENGTH_SHORT).show()
-                    // 3
-                    /*   val intent = Intent()
-                       intent.setClassName(
-                           BuildConfig.APPLICATION_ID,
-                           "com.whynotpot.cats.CatsActivity"
-                       )
-                       startActivity(intent)*/
-
-
+                    Toast.makeText(context,"Module instaled",Toast.LENGTH_SHORT).show()
                 }
                 SplitInstallSessionStatus.CANCELED -> {
                     Log.i("aa", "CANCELED")

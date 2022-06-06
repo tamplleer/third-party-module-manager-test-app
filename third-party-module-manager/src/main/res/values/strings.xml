@@ -1,3 +1,4 @@
 <resources>
     <string name="title_activity_modules_manager">ModulesManagerActivity</string>
+    <string name="card_name">Card name</string>
 </resources>

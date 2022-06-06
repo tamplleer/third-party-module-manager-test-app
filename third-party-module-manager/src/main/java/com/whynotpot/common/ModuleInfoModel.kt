@@ -1,4 +1,4 @@
-package com.whynotpot.frog
+package com.whynotpot.common
 
 abstract class ModuleInfoModel<T>(
     open val name: String = "None",

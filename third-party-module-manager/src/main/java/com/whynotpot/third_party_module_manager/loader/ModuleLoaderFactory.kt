@@ -9,13 +9,16 @@ enum class LoaderType {
 
 class ModuleLoaderFactory {
     companion object {
-        fun get(type: LoaderType, context: Context, externalFileDir: File): ModulesLoader? {
+        fun get(type: LoaderType, context: Context, externalFileDir: File): ModulesLoader {
             return when (type) {
                 LoaderType.FAKE_SPLIT_LOADER -> {
-                    ModulesLoaderFakeSplitInstall.init(context, externalFileDir)
+                    ModulesLoaderFakeSplitInstall.inits(context, externalFileDir)
                     return ModulesLoaderFakeSplitInstall
                 }
-                else -> null
+                else -> {
+                    ModulesLoaderFakeSplitInstall.inits(context, externalFileDir)
+                    return ModulesLoaderFakeSplitInstall
+                }
             }
         }
     }
