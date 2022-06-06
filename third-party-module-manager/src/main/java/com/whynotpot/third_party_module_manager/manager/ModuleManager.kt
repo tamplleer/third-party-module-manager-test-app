@@ -1,12 +1,13 @@
 package com.whynotpot.third_party_module_manager.manager
 
+import com.whynotpot.common.ModuleInfoModel
+
 interface ModuleManager<T> {
-    fun load(name: String)//todo список всех доступных модулей, как узнавать инфу
+    fun load(name: String)
     fun checkExist(name: String): ModuleManagerStatus
     fun delete(name: String): ModuleManagerStatus
-    fun init(name: String)
-    fun enable(name: String)//todo enable to use
-    fun loadListModule()
-    fun loadModules(names:List<String>)
-
+    fun enable(name: String)
+    fun loadListModule(): List<String>
+    fun loadModules(names: List<String>)
+    fun moduleInfo(name: String): ModuleInfoModel<T>
 }

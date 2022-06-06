@@ -33,7 +33,7 @@ class ModulesManagerActivity : ComponentActivity() {
                 ) {
                     Column() {
                         Greeting("Test app")
-                        ListModule(
+                        ListModule<RunApi>(//todo вынести RunApi заменить на дженерик
                             items = moduleManagerImpl.getModalListWithInfo(),
                             moduleManagerImpl
                         )
@@ -51,10 +51,10 @@ fun Greeting(name: String) {
 }
 
 @Composable
-fun <T> ListModule(items: List<ModuleInfoModel<RunApi>>, moduleManager: ModuleManager<T>) {
+fun <T> ListModule(items: List<ModuleInfoModel<T>>, moduleManager: ModuleManager<T>) {
     LazyColumn {
         items(items.size) { i ->
-            NewsResourceCardExpanded(
+            NewsResourceCardExpanded<T>(
                 items[i],
                 CardModel("https://apppearl.com/wp-content/uploads/2021/12/Android1.jpg"),
                 onClick = { moduleManager.load(items[i].name) },

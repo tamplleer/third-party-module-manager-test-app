@@ -21,7 +21,7 @@ object ModulesLoaderFakeSplitInstall : ModulesLoader {
         )
     }
 
-    fun inits(context: Context, externalFileDir: File) {
+    fun init(context: Context, externalFileDir: File) {
         if (!this::context.isInitialized || !this::externalFileDir.isInitialized) {
             ModulesLoaderFakeSplitInstall.context = context
             ModulesLoaderFakeSplitInstall.externalFileDir = externalFileDir
@@ -45,51 +45,49 @@ object ModulesLoaderFakeSplitInstall : ModulesLoader {
     private fun setupModulesDownload() {
         checkInitialisation()
         splitInstallManagerFake.registerListener {
-            // 2
+
             when (it.status()) {
                 SplitInstallSessionStatus.DOWNLOADING -> {
-                    Log.i("aa", "DOWNLOADING")
-                    //   binding.progressIndicator.visibility = View.VISIBLE
-                    //    Toast.makeText(applicationContext, "Downloading", Toast.LENGTH_SHORT).show()
+                    Log.i(this::class.simpleName, "DOWNLOADING")
                 }
                 SplitInstallSessionStatus.INSTALLED -> {
-                    Log.i("aa", "INSTALLED")
-                    Toast.makeText(context,"Module instaled",Toast.LENGTH_SHORT).show()
+                    Log.i(this::class.simpleName, "INSTALLED")
+                    Toast.makeText(context, "Module instaled", Toast.LENGTH_SHORT).show()
                 }
                 SplitInstallSessionStatus.CANCELED -> {
-                    Log.i("aa", "CANCELED")
+                    Log.i(this::class.simpleName, "CANCELED")
                 }
                 SplitInstallSessionStatus.CANCELING -> {
-                    Log.i("aa", "CANCELING")
+                    Log.i(this::class.simpleName, "CANCELING")
                 }
                 SplitInstallSessionStatus.DOWNLOADED -> {
-                    Log.i("aa", "DOWNLOADED")
+                    Log.i(this::class.simpleName, "DOWNLOADED")
                 }
                 SplitInstallSessionStatus.FAILED -> {
-                    Log.i("aa", "FAILED")
+                    Log.i(this::class.simpleName, "FAILED")
                 }
                 SplitInstallSessionStatus.INSTALLING -> {
-                    Log.i("aa", "INSTALLING")
+                    Log.i(this::class.simpleName, "INSTALLING")
                 }
                 SplitInstallSessionStatus.PENDING -> {
-                    Log.i("aa", "PENDING")
+                    Log.i(this::class.simpleName, "PENDING")
                 }
                 SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
-                    Log.i("aa", "REQUIRES_USER_CONFIRMATION")
+                    Log.i(this::class.simpleName, "REQUIRES_USER_CONFIRMATION")
                 }
                 SplitInstallSessionStatus.UNKNOWN -> {
-                    Log.i("aa", "UNKNOWN")
+                    Log.i(this::class.simpleName, "UNKNOWN")
                 }
             }
         }
     }
 
-    fun deleteModule(moduleName: String) {
+    override fun deleteModule(moduleName: String) {
         checkInitialisation()
         splitInstallManagerFake.deferredUninstall(listOf(moduleName));
     }
 
-    fun deleteModule(modulesNames: List<String>) {
+    override fun deleteModule(modulesNames: List<String>) {
         checkInitialisation()
         splitInstallManagerFake.deferredUninstall(modulesNames);
     }

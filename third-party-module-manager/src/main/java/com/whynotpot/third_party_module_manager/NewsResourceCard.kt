@@ -15,24 +15,22 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.whynotpot.common.ModuleInfoModel
-import com.whynotpot.common.RunApi
-import com.whynotpot.frog.ModuleInfoExample
 
 data class CardModel(val headerImageUrl: String)
 
-@Preview
+/*@Preview
 @Composable
 fun MyViewPreview() {
     NewsResourceCardExpanded(
-        ModuleInfoExample<RunApi>(),
+        ModuleInfoExample(),
         CardModel("https://miro.medium.com/max/1400/1*GohlLEuYUivKZLom1AiJkg.png"),
         onClick = {})
-}
+}*/
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NewsResourceCardExpanded(
-    infoModel: ModuleInfoModel<RunApi>,
+fun <T> NewsResourceCardExpanded(
+    infoModel: ModuleInfoModel<T>,
     cardModel: CardModel,
     onClick: () -> Unit,
     modifier: Modifier = Modifier

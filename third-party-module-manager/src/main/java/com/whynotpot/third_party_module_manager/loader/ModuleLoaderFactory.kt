@@ -12,11 +12,11 @@ class ModuleLoaderFactory {
         fun get(type: LoaderType, context: Context, externalFileDir: File): ModulesLoader {
             return when (type) {
                 LoaderType.FAKE_SPLIT_LOADER -> {
-                    ModulesLoaderFakeSplitInstall.inits(context, externalFileDir)
+                    ModulesLoaderFakeSplitInstall.init(context, externalFileDir)
                     return ModulesLoaderFakeSplitInstall
                 }
                 else -> {
-                    ModulesLoaderFakeSplitInstall.inits(context, externalFileDir)
+                    ModulesLoaderFakeSplitInstall.init(context, externalFileDir)
                     return ModulesLoaderFakeSplitInstall
                 }
             }
