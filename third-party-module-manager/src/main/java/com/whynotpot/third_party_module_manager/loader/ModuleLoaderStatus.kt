@@ -5,3 +5,8 @@ enum class ModuleLoaderStatus {
     LOADED,
     ERROR
 }
+
+sealed class LoadStatus
+object Loading : LoadStatus()
+object Loaded : LoadStatus()
+data class Error(val message: String) : LoadStatus()

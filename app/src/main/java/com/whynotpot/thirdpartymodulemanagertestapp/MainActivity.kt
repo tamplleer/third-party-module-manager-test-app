@@ -14,6 +14,7 @@ import com.whynotpot.common.RunApi
 import com.whynotpot.third_party_module_manager.Common
 import com.whynotpot.third_party_module_manager.manager.ModuleManagerImpl
 import com.whynotpot.third_party_module_manager.ModulesManagerActivity
+import com.whynotpot.third_party_module_manager.ThirdPartyModuleManager
 import com.whynotpot.third_party_module_manager.file.FilePathType
 import com.whynotpot.thirdpartymodulemanagertestapp.databinding.ActivityMainBinding
 
@@ -25,11 +26,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
         Common.context = this
+            // ThirdPartyModuleManager.moduleManager<RunApi>(FilePathType.APP_FOLDER, this)
+       // ThirdPartyModuleManager.startListModuleActivity(this)
         val moduleManagerImpl = ModuleManagerImpl<RunApi>(FilePathType.APP_FOLDER, this)
         binding.buttonLoad.setOnClickListener { moduleManagerImpl.load(name) }
         binding.buttonStart.setOnClickListener {

@@ -1,11 +1,19 @@
 package com.whynotpot.third_party_module_manager
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
+import androidx.activity.viewModels
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,11 +28,23 @@ import com.whynotpot.third_party_module_manager.ui.theme.PlayFeatureDeliveryThem
 
 class ModulesManagerActivity : ComponentActivity() {
     private val nameModule = "frogm3"
+    private val viewModelManager: ViewModelManager by viewModels()
+    companion object {
+        fun startActivityModuleManager(context: Context) {
+            val intent = Intent(
+                context, ModulesManagerActivity::class.java
+            )
+
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            context.startActivity(intent)
+        }
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val moduleManagerImpl = ModuleManagerImpl<RunApi>(FilePathType.APP_FOLDER,Common.context!!)
+        val moduleManagerImpl = ModuleManagerImpl<RunApi>(FilePathType.APP_FOLDER, Common.context!!,viewModel =viewModelManager)
         moduleManagerImpl.checkExist(nameModule)
-
         setContent {
             PlayFeatureDeliveryTheme {
                 Surface(
@@ -32,7 +52,6 @@ class ModulesManagerActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     Column() {
-                        Greeting("Test app")
                         ListModule<RunApi>(//todo вынести RunApi заменить на дженерик
                             items = moduleManagerImpl.getModalListWithInfo(),
                             moduleManagerImpl
@@ -52,13 +71,15 @@ fun Greeting(name: String) {
 
 @Composable
 fun <T> ListModule(items: List<ModuleInfoModel<T>>, moduleManager: ModuleManager<T>) {
+    val viewModelManager = hiltViewModel<ViewModelManager>()
     LazyColumn {
         items(items.size) { i ->
             NewsResourceCardExpanded<T>(
                 items[i],
-                CardModel("https://apppearl.com/wp-content/uploads/2021/12/Android1.jpg"),
+                CardModel("https://i.pinimg.com/originals/48/ae/6b/48ae6bab405e24c5b6f3626e4b48bfeb.png"),
                 onClick = { moduleManager.load(items[i].name) },
-                Modifier.padding(24.dp)
+                Modifier.padding(24.dp),
+                        viewModelManager
             )
         }
     }

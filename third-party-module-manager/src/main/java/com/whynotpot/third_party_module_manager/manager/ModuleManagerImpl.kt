@@ -3,10 +3,12 @@ package com.whynotpot.third_party_module_manager.manager
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.ViewModel
 import com.whynotpot.common.ModuleInfoModel
 import com.whynotpot.third_party_module_manager.Common.MODULE_INFO_NAME
 import com.whynotpot.third_party_module_manager.Common.PACKAGE_NAME
 import com.whynotpot.third_party_module_manager.ModuleInfoExample
+import com.whynotpot.third_party_module_manager.ViewModelManager
 import com.whynotpot.third_party_module_manager.file.FileLoaderImpl
 import com.whynotpot.third_party_module_manager.file.FilePathType
 import com.whynotpot.third_party_module_manager.loader.LoaderType
@@ -17,7 +19,8 @@ import java.io.File
 
 class ModuleManagerImpl<T>(
     private val filePathType: FilePathType,
-    val context: Context,
+    val context: Context,//todo добавить строку с именеи если абсолют
+    val viewModel: ViewModelManager? = null
 ) : ModuleManager<T> {
     private val externalModuleFileDir: File by lazy {
         FileLoaderImpl.get(
@@ -29,7 +32,8 @@ class ModuleManagerImpl<T>(
         ModuleLoaderFactory.get(
             LoaderType.FAKE_SPLIT_LOADER,
             context,
-            externalModuleFileDir
+            externalModuleFileDir,
+            viewModel
         )
     }
 
@@ -57,8 +61,6 @@ class ModuleManagerImpl<T>(
                 externalModuleFileDir.listFiles { directory, filename ->
                     directory.length() > 0 && filename.endsWith(".apk")
                 }?.toList()?.map { it.name.split('.')[0] }
-
-
             return existModuleName!!.map {
                 if (it in installModuleName) {
                     moduleInfo(it)
@@ -93,7 +95,7 @@ class ModuleManagerImpl<T>(
             val classLoader = context.classLoader
             val runs: Class<T> =
                 classLoader.loadClass(moduleInfo(nameModule).className) as Class<T>
-            return runs.newInstance()
+            return runs.newInstance()//todo fix runs
         } catch (e: Exception) {
             Log.i(this::class.simpleName, " ${e.message.toString()}")
             Toast.makeText(context, e.message.toString(), Toast.LENGTH_SHORT).show()
